@@ -2,7 +2,7 @@
 """
 Created on Mon Jan 29 12:02:08 2018
 
-@author: Darren
+@author: Darren Henrichs
 
 This file is a first attempt to make an image reader for IFCB data from the raw bytes files. 
 """
@@ -11,7 +11,6 @@ from PIL import Image
 import os
 import numpy as np
 
-datapath = 'D:/Python27/Projects/Classifiers/data/'
 
 def load_data(infilename):
     #will load the data file and adc information file
@@ -24,12 +23,9 @@ def load_data(infilename):
 def get_image(image_num, indata):
     #will take the image index and the image data and adc files 
     #and get the image, return the image array
-    #print(image_num, end='')
     zero_image = 0
     try:
         ###this is for new style IFCB data "D20****"
-        #print(image_num, indata[0][image_num])
-        #print()
         image_width = int(indata[0][image_num].split(',')[15])
         image_height = int(indata[0][image_num].split(',')[16])
         start_byte = int(indata[0][image_num].split(',')[17])
@@ -128,8 +124,7 @@ def get_image(image_num, indata):
         except:
             image_width = 0
             image_height = 0
-            #start_byte = None
-
+            
     stitched = False #set flag
 
     if image_width == image_height == 0:
@@ -170,33 +165,6 @@ def process_file(infilename, num_images=-1, start_image=0):
     loaded_images = [] #this will hold all of the images in case you don't want 
                 # them written to disk
     indata = load_data(infilename)
-    #if num_images == -1 and start_image == 1:  #do all images
-    #    stitched = False
-    #    for indiv_image in range(0, len(indata[0])):
-    #        if stitched:
-    #            stitched = False
-    #            continue
-    #        temp_image = get_image(indiv_image, indata)
-    #        image_result = [indiv_image+1, temp_image[0]]
-    #        if image_result[1] is not None:
-    #            loaded_images.append(image_result)
-    #        if temp_image[1] == True:
-    #            stitched = True
-    #elif num_images == -1: #do all images starting at start_image
-    #    for indiv_image in range(0, len(indata[0][start_image:])):
-    #        image_result = [indiv_image+1+start_image, get_image(indiv_image + start_image, indata)]
-    #        if image_result[1] is not None:
-    #            loaded_images.append(image_result)
-    #elif start_image == 1: #do only the num_images starting from the first image
-    #    for indiv_image in range(0, len(indata[0][:num_images])):
-    #        image_result = [indiv_image+1, get_image(indiv_image, indata)]
-    #        if image_result[1] is not None:
-    #            loaded_images.append(image_result)
-    #else: #get only num_images starting from start_image
-    #    for indiv_image in range(0, len(indata[0][start_image:start_image+num_images])):
-    #        image_result = [indiv_image+1+start_image, get_image(indiv_image + start_image, indata)]
-    #        if image_result[1] is not None:
-    #            loaded_images.append(image_result)
     
     #loaded_images is a list of images each containing [roi_num, image_itself]
     
@@ -213,8 +181,7 @@ def process_file(infilename, num_images=-1, start_image=0):
             loaded_images.append(image_result)
         if temp_image[1] == True:
             stitched = True
-        
-
+    
     return loaded_images
         
 def load_data_file(inpath):
@@ -241,5 +208,3 @@ def main():
         print(indiv_file)
         processed_images.append([indiv_file, process_file(datapath + indiv_file)])
     
-    
-#main()
